@@ -23,7 +23,7 @@ request_header = {
     'Host': 'pan.baidu.com',
     'Connection': 'keep-alive',
     'Upgrade-Insecure-Requests': '1',
-     'User_Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+     'User_Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
     'Sec-Fetch-Dest': 'document',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
     'Sec-Fetch-Site': 'same-site',
@@ -31,6 +31,7 @@ request_header = {
     'Referer': 'https://pan.baidu.com',
     'Accept-Encoding': 'gzip, deflate, br',
     'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-US;q=0.7,en-GB;q=0.6,ru;q=0.5',
+
 }
 session = requests.session()
 urllib3.disable_warnings()
@@ -92,7 +93,7 @@ def get_parentPath_and_subfiledir_subfile(user_id_list, shareid_list, parentPath
         print("开始获取父目录")
         for page in range(1, 100):
             page = str(page)
-            url = "https://pan.baidu.com/share/list?uk=" + user_id_list + "&shareid=" + shareid_list + "&order=other&desc=1&showempty=0&web=1&page=" + page + "&num=100&dir=%2F" + parentPath + "%2F"
+            url = "https://pan.baidu.com/share/list?uk=" + user_id_list + "&shareid=" + shareid_list + "&order=other&desc=1&showempty=0&web=1&page=" + page + "&num=100&dir=" + parentPath + ""
             rsp = s.get(url=url, headers=request_header, verify=False)
             print(url)
             fs_id = re.findall('"fs_id":(\\d*)', rsp.text)
@@ -152,7 +153,8 @@ def main():
     dir_name = "".join(input('\033[2;32m输入文件名: \033[0m\n'))
     cookie = "".join(input('\033[2;32m输入cookie: \033[0m\n'))
     request_header['Cookie'] = cookie
-    link_url = "".join(input('\033[2;32m输入网盘链接: 例如https://pan.baidu.com/s/1fcW_xxxxxxxxxxxxxxx 提取码: 2ejd \n\r\r\r\t 或者 https://pan.baidu.com/s/1fcW_U-AYdXXXX-XXXX  2ejd\033[0m\n'))
+    # link_url = "".join(input('\033[2;32m输入网盘链接: 例如https://pan.baidu.com/s/1fcW_xxxxxxxxxxxxxxx 提取码: 2ejd \n\r\r\r\t 或者 https://pan.baidu.com/s/1fcW_U-AYdXXXX-XXXX  2ejd\033[0m\n'))
+    link_url = "https://pan.baidu.com/s/1BR_8tEhOz0xhIh8TP8mtfw 提取码：8SmX "
     # 开始运行函数
     # 开始运行函数
     try:
@@ -195,6 +197,7 @@ def main():
             link_url_org, pass_code_org = re.sub(r'提取码*[：:](.*)', r'\1', link_url.lstrip()).split(' ', maxsplit=1)
             [link_url, pass_code] = [link_url_org.strip()[:47], pass_code_org.strip()[:4]]
             shareid_list,user_id_list,fs_id_list,server_filedir = check_links(link_url, pass_code, bdstoken)
+            server_filedir = "%2F"+"sharelink"+user_id_list+"-"+fs_id_list[0]+"%2F"+server_filedir
             # 执行检查链接有效性
             check_links_reason = check_links(link_url, pass_code, bdstoken)
             # 执行转存文件
@@ -228,7 +231,7 @@ def main():
         print('百度Cookies:' + cookie + '\n')
         print('文件夹名:' + dir_name + '\n')
         print('链接输入:' + '\n' + str(link_url))
-        
+
     # 恢复按钮状态
 
 
